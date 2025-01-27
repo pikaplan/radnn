@@ -23,24 +23,38 @@
 
 # ......................................................................................
 
-import cv2
+import os
+import sys
+from datetime import datetime
 
 
-
-from .fileobject import FileObject
-
-class PNGFile(FileObject):
-  # ----------------------------------------------------------------------------------
-  def __init__(self, filename, parent_folder=None, error_template=None):
-    super(PNGFile, self).__init__(filename, parent_folder, error_template, "png")
-  # ----------------------------------------------------------------------------------
-  def load(self, filename=None):
-    filename = self._useFileName(filename)
-    nImage = cv2.imread(filename)
-    nImageRGB = cv2.cvtColor(nImage, cv2.COLOR_BGR2RGB)
-    return nImageRGB
-  # ----------------------------------------------------------------------------------
-  def save(self, image_ndarray, filename=None):
-    filename = self._useFileName(filename)
-    cv2.imwrite(filename, image_ndarray)
-  # ----------------------------------------------------------------------------------
+class TeeLogger(object):
+  # --------------------------------------------------------------------------------------------------------
+  def __init__(self, file_name):
+    self.last_flush = datetime.now()
+    sMode = "w"
+    if os.path.exists(file_name):
+      sMode = "a"
+    self.file = open(file_name, sMode)
+    self.stdout = sys.stdout
+    self.isclosed = False
+# --------------------------------------------------------------------------------------------------------
+  def write(self, message):
+    self.stdout.write(message)
+    self.file.write(message)
+    dNow = datetime.now()
+    oDelta = dNow - self.last_flush
+    if oDelta.total_seconds() >= 5:
+      self.flush()
+      self.last_flush = dNow
+  # --------------------------------------------------------------------------------------------------------
+  def flush(self):
+    if not self.isclosed:
+      self.stdout.flush()
+      self.file.flush()
+  # --------------------------------------------------------------------------------------------------------
+  def close(self):
+    self.isclosed = True
+    self.stdout.close()
+    self.file.close()
+  # --------------------------------------------------------------------------------------------------------

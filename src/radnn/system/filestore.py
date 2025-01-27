@@ -1,7 +1,7 @@
 # ......................................................................................
 # MIT License
 
-# Copyright (c) 2021-2025 Pantelis I. Kaplanoglou
+# Copyright (c) 2018-2025 Pantelis I. Kaplanoglou
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@
 import os
 import shutil
 import glob
-import json
 import sys
 if (sys.version_info.major == 3) and (sys.version_info.minor <= 7):
   import pickle5 as pickle
